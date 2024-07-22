@@ -1,3 +1,6 @@
 [submodule "apriltag_ros"]
 	path = apriltag_ros
 	url = https://github.com/rrustagi20/apriltag_ros
+[submodule "gazebo_apriltag"]
+	path = gazebo_apriltag
+	url = git@github.com:rrustagi20/gazebo_apriltag.git
