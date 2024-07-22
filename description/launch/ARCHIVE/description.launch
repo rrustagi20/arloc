@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="robot_namespace" default="/"/>
+  <arg name="realsense_enabled" default="0"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
+    robot_namespace:=$(arg robot_namespace) realsense_enabled:=$(arg realsense_enabled)" />
+
+</launch>

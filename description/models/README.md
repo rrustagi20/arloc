@@ -1,0 +1,1 @@
+The AprilTag 36h11 models used for simulation are available in the gazebo_apriltag folder in the main workspace.

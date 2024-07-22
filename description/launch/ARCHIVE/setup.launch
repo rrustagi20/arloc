@@ -1,0 +1,22 @@
+<launch>
+
+  <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find gazebo_apriltag)/models"/>  <!--Add the models folder to the GAZEBO_MODEL_PATH environment variable-->
+  <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find description)/worlds"/> 
+
+  <arg name="world_name" default="simple_wall_aruco.world"/>
+  <arg name="enable_ground_truth" default="true" />
+  <arg name="gui" default="true"/>
+  <arg name="paused" default="true"/>
+  
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world_name)"/> <!-- world_name is wrt GAZEBO_RESOURCE_PATH environment variable -->
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <include file="$(find description)/launch/spawn.launch"/>
+</launch>
