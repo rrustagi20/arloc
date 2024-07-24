@@ -19,8 +19,13 @@ source ../devel/setup.bash
 
 rosrun tf static_transform_publisher 1.0 1.0 1.0 0.0 0.0 1.0 imu_link base_footprint 1000
 ```
+### Test Environment Preview
+<!--![Screenshot from 2023-07-06 14-50-18](https://github.com/rrustagi20/slam/assets/77167720/f527c8e9-b948-4fcc-87b2-663b1619c495)-->
+![image](https://github.com/user-attachments/assets/2a1f1cc0-bebc-410a-ba71-7ab4c5ec5e3b)
 
-![Screenshot from 2023-07-06 14-50-18](https://github.com/rrustagi20/slam/assets/77167720/f527c8e9-b948-4fcc-87b2-663b1619c495)
+### Dataset Preparation:
+1) Mapping Phase
+2) Localisation Phase
 
 ### Dependencies:
 1) Husky (custom urdf file)
