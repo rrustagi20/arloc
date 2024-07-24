@@ -3,7 +3,7 @@ Robot Localisation improved using AR Tags (ARLoc)
 
 A husky ground robot with enabled realsense depth camera is used for simulation for detection and pose estimation of april tags.
 
-#### Cloning the repository
+### Cloning the repository
 ```bash
 cd src
 git clone git@github.com:rrustagi20/arloc.git .
@@ -12,12 +12,37 @@ git submodule update
 cd .. && catkin build
 source ../devel/setup.bash
 ```
+### Project Pipeline
+![image](https://github.com/user-attachments/assets/339f63e0-c9a1-41e9-8f1d-916d35a71fed)
 
-## Resolving Warns / Issues
+### Test Environment Preview
+<!--![Screenshot from 2023-07-06 14-50-18](https://github.com/rrustagi20/slam/assets/77167720/f527c8e9-b948-4fcc-87b2-663b1619c495)-->
+![image](https://github.com/user-attachments/assets/2a1f1cc0-bebc-410a-ba71-7ab4c5ec5e3b)
+
+### Gmapping Map Preview
+![image](https://github.com/user-attachments/assets/982a4023-3fc1-461a-b046-eae606c98a99)
+
+### Dataset Preparation:
+1) Mapping Phase
+Run (1) Gmapping (2) ARTag detection library (3) Robot Movement Script (4) Record following topics
+/tag_detections /map /map_metadata /tf /tf_static /front/scan /gazebo/model_states /imu/data /imu/data/bias
+Save the map to publish it later during localisation
+
+3) Localisation Phase
+Publish the saved map using map_server package
+Play the above bag file and run localisation algorithms (eg. amcl / als-ros)
+Paralely record estimatedPose by the localisation algorithms to compare with the ground truth
+
+### Dependencies:
+1) Husky (custom urdf file)
+2) AprilTag
+   
+### Resolving Warns / Issues
 ```bash
 [ WARN] [1689018550.820283335]: Could not obtain transform from imu_link to base_footprint. Error was "imu_link" passed to lookupTransform argument source_frame does not exist. 
 
 rosrun tf static_transform_publisher 1.0 1.0 1.0 0.0 0.0 1.0 imu_link base_footprint 1000
 ```
 
-![Screenshot from 2023-07-06 14-50-18](https://github.com/rrustagi20/slam/assets/77167720/f527c8e9-b948-4fcc-87b2-663b1619c495)
+### Note:
+1) Put real-time constraints on sensors for better explanation
