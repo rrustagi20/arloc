@@ -1,0 +1,28 @@
+<launch>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="0.2"/>
+    <arg name="yaw" default="0.0" />
+
+    <!-- <arg name="camera" default="$(optenv HUSKY_REALSENSE_ENABLED 1)" />
+    <arg name="laser" default="$(optenv HUSKY_LMS1XX_ENABLED 1)" /> -->
+    <env name="HUSKY_LMS1XX_ENABLED" value="1"/>
+    <env name="HUSKY_REALSENSE_ENABLED" value="1"/>
+
+    <!-- Additional nodes for specific accessories -->
+    <!-- <group if="$(optenv HUSKY_REALSENSE_ENABLED 0)">
+      <include file="$(find husky_gazebo)/launch/realsense.launch" />
+    </group>
+
+    <group if="$(optenv HUSKY_LMS1XX_ENABLED 0)">
+      <include file="$(find husky_gazebo)/launch/lms1xx.launch" />
+    </group> -->
+
+    <include file="$(find husky_gazebo)/launch/spawn_husky.launch">
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="yaw" value="$(arg yaw)"/>
+    </include>
+
+</launch>
