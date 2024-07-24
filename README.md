@@ -3,7 +3,7 @@ Robot Localisation improved using AR Tags (ARLoc)
 
 A husky ground robot with enabled realsense depth camera is used for simulation for detection and pose estimation of april tags.
 
-#### Cloning the repository
+### Cloning the repository
 ```bash
 cd src
 git clone git@github.com:rrustagi20/arloc.git .
@@ -13,7 +13,7 @@ cd .. && catkin build
 source ../devel/setup.bash
 ```
 
-## Resolving Warns / Issues
+### Resolving Warns / Issues
 ```bash
 [ WARN] [1689018550.820283335]: Could not obtain transform from imu_link to base_footprint. Error was "imu_link" passed to lookupTransform argument source_frame does not exist. 
 
@@ -28,7 +28,14 @@ rosrun tf static_transform_publisher 1.0 1.0 1.0 0.0 0.0 1.0 imu_link base_footp
 
 ### Dataset Preparation:
 1) Mapping Phase
-2) Localisation Phase
+Run (1) Gmapping (2) ARTag detection library (3) Robot Movement Script (4) Record following topics
+/tag_detections /map /map_metadata /tf /tf_static /front/scan /gazebo/model_states /imu/data /imu/data/bias
+Save the map to publish it later during localisation
+
+3) Localisation Phase
+Publish the saved map using map_server package
+Play the above bag file and run localisation algorithms (eg. amcl / als-ros)
+Paralely record estimatedPose by the localisation algorithms to compare with the ground truth
 
 ### Dependencies:
 1) Husky (custom urdf file)
