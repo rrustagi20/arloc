@@ -3,6 +3,8 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <tf2/convert.h>
+#include <tf2/buffer_core.h>
 // #include <geometry_msgs/PoseStamped.h>
 #include <apriltag_ros/AprilTagDetection.h>
 #include <apriltag_ros/AprilTagDetectionArray.h>
@@ -18,6 +20,7 @@ tf2::Quaternion R_base_world; // Rotation from base_link to world
 tf2::Quaternion T_base_world; // Translation from base_link to world
 tf2::Quaternion T_map_odom; // Translation from odom to map frame
 tf2::Quaternion R_odom_base; // Rotation from odom to map frame
+tf2::Vector3 sample;
 std::vector<geometry_msgs::TransformStamped> transformStamped; // [T_marker_base,T_base_world]
 // ros::init(argc, argv, "aruco_pose_transformer");
 // ros::NodeHandle nh;
@@ -36,8 +39,8 @@ void metaData()
 void estimateRobotPose()
 {
     // Estimate the pose of the Robot in World Frame using Gmapping information
-    // Your code here...
-
+    //transformTF2ToMsg (const tf2::Quaternion &orient, const tf2::Vector3 &pos, geometry_msgs::TransformStamped &msg, ros::Time stamp, const std::string &frame_id, const std::string &child_frame_id)
+    // transformTF2toMsg(R_base_world, sample, transformStamped[1], ros::Time::now(), "world", "base_link");
     T_base_world.setX(transformStamped[1].transform.translation.x);
     T_base_world.setY(transformStamped[1].transform.translation.y);
     T_base_world.setZ(transformStamped[1].transform.translation.z);
@@ -74,7 +77,8 @@ void initVals()
 
 void findTransforms(std::vector<geometry_msgs::TransformStamped>& transformStamped, int id)
 {
-    float waitTime = 0.052;
+    // float waitTime = 0.052;
+    float waitTime = 0.1;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
     ros::Duration(waitTime).sleep();
@@ -101,7 +105,7 @@ void findTransforms(std::vector<geometry_msgs::TransformStamped>& transformStamp
 void update(int ID)
 {
     // Update the transformation between the base_link frame and the world frame
-    ROS_INFO("Inside update function");
+    // ROS_INFO("Inside update function");
     while(transformStamped.size() != 3)
     {
         transformStamped.clear();
@@ -111,7 +115,7 @@ void update(int ID)
     // Initialize the values of the transformation between the image/marker frame and the base_link frame
     initVals();
     estimateRobotPose();
-    ROS_INFO("After estimateRobotPose");
+    // ROS_INFO("After estimateRobotPose");
     T_abs = (R_marker_cam.inverse()*T_marker_cam*R_marker_cam);
     // T_abs = -T_abs; // Offset Management
     // Conversion form camera to absframe
@@ -123,7 +127,7 @@ void update(int ID)
     // T_abs = T_marker_cam;
     T_abs_ = T_abs_ + T_base_world;
     
-    ROS_INFO("x: %f | y: %f | z: %f",T_abs_.getX(),T_abs_.getY(),T_abs_.getZ());
+    // ROS_INFO("x: %f | y: %f | markerId: %f",T_abs_.getX(),T_abs_.getY(),ID);
 
     std::string param_name = "/marker_" + std::to_string(ID) + "/position";
 
@@ -135,12 +139,16 @@ void update(int ID)
         ros::param::set("/marker_" + std::to_string(ID) + "/orientation", orientation);
     }
 }
-
+// Wierd thing: Even though detections array is empty, even so the callback is "called"; strange. maybe it sends an "empty" message to be received.
 void markerCallback(const apriltag_ros::AprilTagDetectionArray::ConstPtr& msg)
 {
     int markerID_detected = 0;
     apriltag_ros::AprilTagDetectionArray markerPose = *msg;
+    //Putting failsafe inorder to avoid segmentation fault is detections is empty
+    if(msg->detections.empty())
+        return;
     markerID_detected = markerPose.detections[0].id[0];
+    ROS_INFO("Marker ID: %d",markerID_detected);
     update(markerID_detected);
 }
 
