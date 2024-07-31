@@ -4,3 +4,6 @@
 [submodule "gazebo_apriltag"]
 	path = gazebo_apriltag
 	url = git@github.com:rrustagi20/gazebo_apriltag.git
+[submodule "description/models/gazebo_apriltag"]
+	path = description/models/gazebo_apriltag
+	url = https://github.com/koide3/gazebo_apriltag

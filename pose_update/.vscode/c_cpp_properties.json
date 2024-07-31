@@ -3,10 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/opt/ros/melodic/include/*",
-                "/home/pc/slam_ws1/src/slam/pose_update/include/**",
-                "/home/pc/slam_ws1/src/slam/kalman/include/**"
+                "/opt/ros/melodic/include/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
