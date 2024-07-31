@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   # tf2_msgs
   # tf
   # tf2
+  tf2_ros
   apriltag_ros
   amcl
 )
@@ -84,3 +85,6 @@ include_directories(
 
 add_executable(pose_fuse src/pose_fuse.cpp)
 target_link_libraries(pose_fuse ${catkin_LIBRARIES})
+
+add_executable(pose_new src/poseNew.cpp)
+target_link_libraries(pose_new ${catkin_LIBRARIES})
