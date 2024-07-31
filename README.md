@@ -44,5 +44,75 @@ Paralely record estimatedPose by the localisation algorithms to compare with the
 rosrun tf static_transform_publisher 1.0 1.0 1.0 0.0 0.0 1.0 imu_link base_footprint 1000
 ```
 
-### Note:
+### To Resolve:
 1) Put real-time constraints on sensors for better explanation
+2) Feels like main problem can pop up due to time calculation in pose_update code and due to varying freq of amcl_pose and husky_pose: update might be latency affected!
+3) What is tf2::QuadWord?
+
+### Learnings:
+1. Configuring Transforms in World and Model frame.
+```xml
+<model name='Apriltag36_11_00005'>
+<!-- <pose frame=''>0 0 0 0 0 0</pose> -->
+<scale>1 1 1</scale>
+    <link name='main'>
+
+        <!-- (World Property) This one below changes (orients) both frames and marker together
+    (Model Property Alone) The lower one changes only the frame. -->
+
+        <!-- RPY is always along world axis in which models are placed -->
+
+        <pose frame=''>3.05545 2.36463 0.5 0 1.5708 0</pose>
+        <!-- <pose frame=''>3.15087 2.7088 0.5 0 0 1.57</pose> -->
+        <velocity>0 0 0 0 -0 0</velocity>
+        <acceleration>0 0 0 0 -0 0</acceleration>
+        <wrench>0 0 0 0 -0 0</wrench>
+    </link>
+</model>
+.
+.
+.
+<model name='Apriltag36_11_00005'>
+    <link name='main'>
+    <pose frame=''>0 0 0 0 3.14159 1.5707</pose>
+    <visual name='main_Visual'>
+        <geometry>
+        <box>
+            <size>1 1 0.01</size>
+        </box>
+        </geometry>
+        <material>
+        <script>
+            <uri>model://Apriltag36_11_00005/materials/scripts</uri>
+            <uri>model://Apriltag36_11_00005/materials/textures</uri>
+            <name>Apriltag36_11_00005</name>
+        </script>
+        </material>
+    </visual>
+    <self_collide>0</self_collide>
+    <enable_wind>0</enable_wind>
+    <kinematic>0</kinematic>
+    </link>
+    <static>1</static>
+    <!-- <pose frame=''>3.15087 2.7088 0 0 -0 0</pose> -->
+</model>
+```
+2. To publish desired /tf
+
+a. Either publish the frame desired tf using static_tf_publisher or else
+
+b. Check the view_frames.pdf for a tree of frames and blaming broadcaster node for it.
+
+3. I was getting mirror pose (couldn't understand)
+
+a. First I checked frame_id in /tag_detections to see if there is the issue. (check in rviz the tf and view_frames.pdf for parent publisher of frames)
+
+b. Then I checked whether in pinhole model image is perceived as mirrored.
+
+c. Then I checked rvec itself. Which had the error from there itself; meaning no influence of frame_id whatsoever. Cleared
+
+d. Finally, I checked in solvePnP(objectPoints,ImagePoints,...) whether object and image points are considered in the same order which was not in my case and so after correcting that; the pose is now perfect as percieved by apriltag library.
+
+4. The quaternion got in my apriltag_library is of marker wrt camera frame at that instant i.e by that much quaternion move the camera frame to obtain the marker frame; orientation from camera to marker
+
+5. Use `rosbag play --clock abc.bag` with the `--clock` argument for forcing bag time to be published /clock and set `rosparam set /use_sim_time true` for nodes to use the simulated /clock time
