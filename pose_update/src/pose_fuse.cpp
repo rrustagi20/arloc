@@ -26,6 +26,14 @@ public:
         weight_marker_ = 0.9; // High confidence in marker pose
         weight_amcl_ = 0.1; // Low confidence in AMCL pose
 
+        self_pose_.position.x = 0;
+        self_pose_.position.y = 0;
+        self_pose_.position.z = 0;
+        self_pose_.orientation.x = 0;
+        self_pose_.orientation.y = 0;
+        self_pose_.orientation.z = 0;
+        self_pose_.orientation.w = 1;
+
         // Set variances for Bayesian fusion (lower variance means higher confidence)
         // variance_marker_ = 0.01; // High confidence
         // variance_amcl_ = 0.1; // Low confidence
@@ -72,6 +80,8 @@ public:
         // camera_marker.setZ(pose_marker.detections[0].pose.pose.pose.orientation.z); 
 
         tf2::Quaternion camera_world = ori_marker_wrt_world*(ori_marker_wrt_camera.inverse());  // means you get quaternion of camera in world_frame
+        std::cout << "ori_marker_wrt_world: " << ori_marker_wrt_world.getX() << " " << ori_marker_wrt_world.getY() << " " << ori_marker_wrt_world.getZ() << " " << ori_marker_wrt_world.getW() << std::endl;
+        // std::cout << "Camera World: " << camera_world.getX() << " " << camera_world.getY() << " " << camera_world.getZ() << " " << camera_world.getW() << std::endl;
         // double angle = ans.getAngle()*180/3.14159;
         // Now hardcoding relative rotation bw robot and base
         tf2::Quaternion ori_cam_wrt_base = tf2::Quaternion(0,0,-0.7071,0.7071)*tf2::Quaternion(-0.7071,0,0,0.7071);
@@ -100,9 +110,9 @@ public:
         self_pose_.orientation.w = ori_robot_wrt_world.getW();
         // ROS_INFO("Position: %f %f %f",pos_marker_wrt_base_frombase[0],pos_marker_wrt_base_frombase[1],pos_marker_wrt_base_frombase[2]);
         // std::cout << "Position: " << pso[0] << " " << pso[1] << std::endl;
-        // ROS_INFO("Position: %f %f %f",self_pose_.position.x,self_pose_.position.y,self_pose_.position.z);
+        ROS_INFO("Position: %f %f %f",self_pose_.position.x,self_pose_.position.y,self_pose_.position.z);
         // ROS_INFO("--------");
-        // ROS_INFO("Orientation: %f %f %f %f",ori_marker_wrt_world.getX(),ori_marker_wrt_world.getY(),ori_marker_wrt_world.getZ(),ori_marker_wrt_world.getW());
+        ROS_INFO("Orientation: %f %f %f %f",ori_marker_wrt_world.getX(),ori_marker_wrt_world.getY(),ori_marker_wrt_world.getZ(),ori_marker_wrt_world.getW());
 
         // std::cout << "Position: " << pos.getX() << " " << pos.getY() << " " << self_pose_.position.z << std::endl;
         // tf2::quaternionTFToMsg(camera_world, self_pose_.orientation);
@@ -165,7 +175,7 @@ public:
         // pose_marker_ = msg;
         backCalculate(pos,quat,ori_marker_wrt_camera,pos_marker_wrt_image);
         // geometry_msgs::PoseWithCovariance marker_cov_pose = {pose_marker_.pose, variance_marker_};
-        // if (pose_amcl_received_) {
+        if (pose_amcl_received_) {
             // geometry_msgs::PoseWithCovariance amcl_cov_pose = {pose_amcl_.pose, variance_amcl_};
 
             // Weighted averaging fusion
@@ -185,17 +195,20 @@ public:
             // initial_pose_msg.pose.covariance[0] = weight_amcl_*weight_amcl_ * pose_amcl_.pose.covariance[0] + weight_marker_*weight_marker_ * 0.01; // Set the covariance for x
             // initial_pose_msg.pose.covariance[7] = weight_amcl_*weight_amcl_ * pose_amcl_.pose.covariance[7] + weight_marker_*weight_marker_ * 0.01; // Set the covariance for y
             // initial_pose_msg.pose.covariance[35] = weight_amcl_*weight_amcl_ * pose_amcl_.pose.covariance[35] + weight_marker_*weight_marker_ * 0.01; // Set the covariance for yaw
-
-            initial_pose_msg.pose.covariance[0] = 0.01;
-            initial_pose_msg.pose.covariance[7] = 0.01;
-            initial_pose_msg.pose.covariance[35] = 0.01;
+            for (int i = 0; i < 36; i++)
+            {
+                initial_pose_msg.pose.covariance[i] = 0;
+            }
+            // initial_pose_msg.pose.covariance[0] = 0.01;
+            // initial_pose_msg.pose.covariance[7] = 0.01;
+            // initial_pose_msg.pose.covariance[35] = 0.01;
 
             // initial_pose_msg.pose.covariance[0] = fused_pose_bayes.variance; // Set the covariance for x
             // initial_pose_msg.pose.covariance[7] = fused_pose_bayes.variance; // Set the covariance for y
             // initial_pose_msg.pose.covariance[35] = fused_pose_bayes.variance; // Set the covariance for yaw
             pose_amcl_received_ = false;
             initial_pose_pub_.publish(initial_pose_msg);
-        // }
+        }
     }
 
     void amclCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg) {
