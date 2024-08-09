@@ -15,17 +15,17 @@ def csv_to_tum(csv_file, tum_file):
 if __name__ == '__main__':
 
     # AMCL CSV file
-    csv_file = '/home/rahul/ros/arloc/src/arloc/office_vision_amcl_poses.csv' 
+    csv_file = '/home/rahul/ros/arloc/src/arloc/office_vision_poses.csv' 
     # amcl TUM file
-    tum_file = 'office_vision_amcl.tum'
+    tum_file = 'office_vision.tum'
 
     csv_to_tum(csv_file, tum_file)
     print(f"Converted {csv_file} to {tum_file}")
 
     # gt CSV file
-    csv_file = '/home/rahul/ros/arloc/src/arloc/office_vision_ground_truth_poses.csv' 
+    csv_file = '/home/rahul/ros/arloc/src/arloc/office_ground_vision_truth_poses.csv' 
     # gt TUM file
-    tum_file = 'office_vision_gtruth.tum'
+    tum_file = 'office_gtruth_vision.tum'
 
     csv_to_tum(csv_file, tum_file)
     print(f"Converted {csv_file} to {tum_file}")

@@ -61,5 +61,5 @@ def main():
 if __name__ == '__main__':
     main()
     # Save the synchronized data to a new CSV file
-    df_amcl.to_csv('office_vision_amcl_poses.csv', index=False)
-    df_gt.to_csv('office_vision_ground_truth_poses.csv', index=False)
+    df_amcl.to_csv('office_vision_poses.csv', index=False)
+    df_gt.to_csv('office_ground_vision_truth_poses.csv', index=False)
