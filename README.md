@@ -28,10 +28,15 @@ Run (1) Gmapping (2) ARTag detection library (3) Robot Movement Script (4) Recor
 /tag_detections /map /map_metadata /tf /tf_static /front/scan /gazebo/model_states /imu/data /imu/data/bias
 Save the map to publish it later during localisation
 
+`rosbag record -o office_mapping_bag.bag /tag_detections /map /map_metadata /tf /tf_static /front/scan /gazebo/model_states /imu/data /imu/data/bias`
+
 3) Localisation Phase
 Publish the saved map using map_server package
 Play the above bag file and run localisation algorithms (eg. amcl / als-ros)
 Paralely record estimatedPose by the localisation algorithms to compare with the ground truth
+
+`rosbag record -o amcl.bag /amcl_pose /particlecloud /tf /tf_static`
+
 
 ### Dependencies:
 1) Husky (custom urdf file)
